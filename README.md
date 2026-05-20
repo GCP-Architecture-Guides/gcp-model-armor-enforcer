@@ -69,7 +69,7 @@ Follow these steps to trigger deployment from your local workstation or shell:
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/[YOUR_ORG]/gcp-model-armor-enforcer.git
+git clone https://github.com/GCP-Architecture-Guides/gcp-model-armor-enforcer.git
 cd gcp-model-armor-enforcer
 ```
 
@@ -88,7 +88,7 @@ _GCS_STATE_BUCKET="your-terraform-state-bucket-name"
 ```
 
 #### **Option B: Hardcode Defaults in `cloudbuild.yaml`**
-Open [cloudbuild.yaml](file:///usr/local/google/home/manishkgaur/Desktop/Workspace/gcp-model-armor-enforcer/cloudbuild.yaml) and modify the default values in the `substitutions:` block:
+Open [cloudbuild.yaml](file://cloudbuild.yaml) and modify the default values in the `substitutions:` block:
 
 ```yaml
 substitutions:
