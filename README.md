@@ -19,7 +19,7 @@ graph TD
     A[Cloud Build Trigger] --> B[Step 1: discover.py Script]
     B --> C{Project Vertex AI Enabled?}
     C -- Yes --> D[Target for Model Armor]
-    C -- No & --force-model-armor --> D
+    C -- "No & --force-model-armor" --> D
     C -- No --> E[Skip Project]
     D --> F[Write to terraform.tfvars.json]
     F --> G[Step 2: terraform init]
