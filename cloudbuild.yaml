@@ -1,0 +1,45 @@
+steps:
+  # Step 1: Project Discovery and Audit
+  - name: 'gcr.io/google.com/cloudsdktool/google-cloud-cli:latest'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Installing Python discovery script requirements..."
+        pip3 install -r requirements.txt
+        
+        echo "Running Discovery script to target projects..."
+        python3 discover.py "${_PARENT_ID}" --force-model-armor=${_FORCE_MODEL_ARMOR}
+    id: 'discover-and-audit'
+
+  # Step 2: Initialize Terraform with dynamic remote GCS state bucket
+  - name: 'hashicorp/terraform:1.5.7'
+    args:
+      - 'init'
+      - '-backend-config=bucket=${_GCS_STATE_BUCKET}'
+      - '-backend-config=prefix=model-armor/state'
+    id: 'tf-init'
+
+  # Step 3: Compute deployment plan
+  - name: 'hashicorp/terraform:1.5.7'
+    args:
+      - 'plan'
+      - '-var=parent_id=${_PARENT_ID}'
+      - '-out=tfplan'
+    id: 'tf-plan'
+
+  # Step 4: Execute target project Model Armor deployments & Folder Floor Settings
+  - name: 'hashicorp/terraform:1.5.7'
+    args:
+      - 'apply'
+      - '-auto-approve'
+      - 'tfplan'
+    id: 'tf-apply'
+
+substitutions:
+  _PARENT_ID: 'folders/YOUR_FOLDER_ID'        # Default folder/org ID to discover and apply baseline rules
+  _FORCE_MODEL_ARMOR: 'true'                 # Force model armor template provisioning even if Vertex AI is inactive
+  _GCS_STATE_BUCKET: 'YOUR_GCS_STATE_BUCKET' # Central remote state GCS bucket name
+
+options:
+  logging: CLOUD_LOGGING_ONLY
